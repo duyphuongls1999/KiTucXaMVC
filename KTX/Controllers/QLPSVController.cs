@@ -53,28 +53,31 @@ namespace KTX.Controllers
                     SetAlert("Mã phòng sinh viên đã tồn tại", "error");
                     return RedirectToAction("Create", "QLPSV");
                 }
-                else if (daoPSV.Find(sinhVien.MaSV) != null)
+                if (daoPSV.getByMaSV(sinhVien.MaSV) != null)
                 {
                     SetAlert("Mã sinh viên này đã có phòng", "error");
                     return RedirectToAction("Create", "QLPSV");
                 }
-                else if (daoSV.Find(sinhVien.MaSV) == null && daoPhong.Find(sinhVien.MaPhong) == null)
+                if (daoSV.getByMaSV(sinhVien.MaSV) == null )
                 {
-                    SetAlert("Sinh viên hoặc phòng không có trong CSDL", "error");
+                    SetAlert("Sinh viên không có trong CSDL", "error");
                     return RedirectToAction("Create", "QLPSV");
                 }
-
+                if (daoPhong.Find(sinhVien.MaPhong) == null)
+                {
+                    SetAlert("Phòng không có trong CSDL", "error");
+                    return RedirectToAction("Create", "QLPSV");
+                }
                 String result = daoPSV.Insert(sinhVien);
-
                 if (!String.IsNullOrEmpty(result))
                 {
                     SetAlert("Thêm sinh viên vào phòng thành công", "success");
                     return RedirectToAction("Index", "QLPSV");
                 }
                 else
-                {
-                    ModelState.AddModelError("", "Thêm sinh viên vào phòng không thành công");
-                }
+                    {
+                        ModelState.AddModelError("", "Thêm sinh viên vào phòng không thành công");
+                    }
             }
             return View();
         }
